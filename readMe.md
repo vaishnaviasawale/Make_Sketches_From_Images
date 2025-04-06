@@ -1,4 +1,4 @@
-<b>MAKE SKETCHES FROM IMAGES
+<br />MAKE SKETCHES FROM IMAGES
 
 <br /><b>csv2</b> cv2 is the module import name for the "opencv-python" library, which provides access to the functionalities of the OpenCV (Open Source Computer Vision Library) for image processing and computer vision tasks. 
 
