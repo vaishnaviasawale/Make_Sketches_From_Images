@@ -20,3 +20,14 @@
 <br />pip install flask # Flask is a Python module that allows us to build web apps
 
 <br />pip install opencv-python # to use cv2
+
+<br /><b>STEPS TO DEPLOY ON REPLIT</b>
+
+<br />1. Go to replit.com and sign up
+<br />2. Click on ‘Create App’ and create one with the Python template
+<br />3. Add all the necessary files and folders from this repo
+<br />4. Configure Replit by searching for a .replit file and modify it to start the app with “app.py” (instead of main.py)
+<br />5. On the left pan, under ‘Tools’, search for ‘Secret’ to add our secrets as a .env file (CLOUD_NAME, API_KEY, and API_SECRET needed to upload images to Cloudinary)
+<br />6. On the left pane, under ‘Tools’ open the ‘Shell’. Run ‘pip install -r requirements.txt’ to install all needed packages
+<br />7. Click on ‘Run’ at the top of the page. Under the Webview, we can see a preview of our website.
+<br />8. Click on ‘Deploy’. We get a temporary Dev URL of the type https://your-repl-name.username.repl.co .This is a public URL and can be used by anyone. To set a custom domain, Replit will give you a CNAME record to set in your domain registrar (like GoDaddy, Namecheap, etc.). We need to own a domain (can be bought from any registrar), update DNS records (Replit will guide), and then wait a few minutes to an hour for it to go live. This also needs a paid plan.
