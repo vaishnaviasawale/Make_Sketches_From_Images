@@ -15,11 +15,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase_key.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
-
 # Cloudinary Config
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
@@ -48,7 +43,7 @@ def upload_to_cloudinary(image_np, filename):
     byte_stream = io.BytesIO(buffer)
 
     # Upload to Cloudinary
-    upload_result = cloudinary.uploader.upload(byte_stream, public_id=f'sketches/{filename}', resource_type="image")
+    upload_result = cloudinary.uploader.upload(byte_stream, folder="sketches", public_id=filename, resource_type="image")
     return upload_result['secure_url']
 
 @app.route('/')
@@ -79,28 +74,29 @@ def sketch():
         original_url = upload_to_cloudinary(cv_img, original_filename)
         sketch_url = upload_to_cloudinary(sketch_img, sketch_filename)
 
-        # Save in Firestore
-        current_user_id = "User_1"
-        db.collection('sketches').add({
-            'user_id': current_user_id,
-            'original_url': original_url,
-            'sketch_url': sketch_url,
-            'timestamp': firestore.SERVER_TIMESTAMP
-        })
-
         return redirect(url_for('home', org=original_url, sketch=sketch_url))
     return "Invalid file", 400
 
 @app.route('/gallery')
 def gallery():
-    current_user_id = "User_1"
-    sketches = db.collection('sketches')\
-        .where('user_id', '==', current_user_id)\
-        .order_by('timestamp', direction=firestore.Query.DESCENDING)\
-        .stream()
-    
-    sketch_data = [doc.to_dict() for doc in sketches]
-    return render_template('gallery.html', sketches=sketch_data)
+    result = cloudinary.Search()\
+        .expression("public_id:sketches/*")\
+        .sort_by("created_at", "desc")\
+        .max_results(30)\
+        .execute()
+
+    print(len(result))
+    images = result.get("resources", [])
+    print(len(images))
+    sketch_data = [{
+        'url': img['secure_url'],
+        'created_at': img['created_at'],
+        'public_id': img['public_id']
+    } for img in images]
+
+    for img in images:
+        print(sketch_data)
+    return render_template("gallery.html", sketches=sketch_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
